@@ -1,4 +1,5 @@
 {
+  "_meta_status": "DRAFT — fields below blend documented MCP Registry submission shape with speculative metadata extensions. Before first registry submission, verify against the live schema at registry.modelcontextprotocol.io (and the Glama / mcp.so / punkpeye / wong2 listing requirements). Speculative fields likely to need rename or removal: $schema URL (unverified), transports_planned, client_compatibility, security, spec_version_target, spec_version_forward_compat. The required fields (name, description, version, repository, packages, tools) follow established conventions from peer servers (Sentry, PostHog, Supabase) and should validate cleanly.",
   "$schema": "https://modelcontextprotocol.io/schemas/server.schema.json",
   "name": "io.tesseraai/mcp-server",
   "description": "MCP server exposing Tessera's LLM cost optimization layer as tools for tool-using agents (Claude Desktop, Claude Code, Cursor, Cline, Continue, Goose, Zed). Returns savings decisions — anchored spend, drift detection, recommendation approval — not raw logs. v0.1 surface: six tools (five read + one mutate). Stdio transport at v0.1; Streamable HTTP queued.",
