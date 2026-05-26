@@ -3,7 +3,7 @@
   "name": "io.tesseraai/mcp-server",
   "title": "Tessera MCP Server",
   "description": "MCP server for Tessera's LLM cost-optimization layer — anchored spend, drift, recommendations.",
-  "version": "0.1.0-alpha.0",
+  "version": "0.1.0",
   "websiteUrl": "https://tesseraai.io/dev",
   "repository": {
     "url": "https://github.com/tessera-llm/mcp-server",
@@ -14,7 +14,7 @@
     {
       "registryType": "npm",
       "identifier": "@tessera-llm/mcp-server",
-      "version": "0.1.0-alpha.0",
+      "version": "0.1.0",
       "runtimeHint": "npx",
       "transport": {
         "type": "stdio"
@@ -22,7 +22,7 @@
       "environmentVariables": [
         {
           "name": "TESSERA_API_KEY",
-          "description": "API key in tk_live_* or tk_test_* format. Get one free at https://tesseraai.io/dev.",
+          "description": "API key in tk_* format. Get one free at https://tesseraai.io/dev.",
           "isRequired": true,
           "isSecret": true
         },
@@ -37,7 +37,7 @@
   ],
   "_meta": {
     "io.modelcontextprotocol.registry/publisher-provided": {
-      "status": "alpha",
+      "status": "active",
       "license": "Apache-2.0",
       "categories": [
         "observability",
