@@ -11,20 +11,18 @@ const inputSchema = z.object({
     .string()
     .max(500)
     .optional()
-    .describe('Optional human-readable note recorded in the audit trail next to the approval event.'),
+    .describe('Optional human-readable note appended to the recommendation notes field next to the approval timestamp.'),
 });
 
 type Args = z.infer<typeof inputSchema>;
 
 interface Result {
   recommendation_id: string;
-  workload_id: string;
-  mechanic_id: string;
-  previous_status: 'suggested';
-  new_status: 'active';
+  workload_id: string | null;
+  previous_status: 'open';
+  new_status: 'in_progress';
   approved_at: string;
-  approved_by_user_id: string;
-  audit_event_id: string;
+  approved_by_session_key_prefix: string;
 }
 
 async function handler(args: Args, ctx: ReturnType<typeof getCurrentSession>): Promise<Result> {
@@ -33,7 +31,9 @@ async function handler(args: Args, ctx: ReturnType<typeof getCurrentSession>): P
     body: { approval_note: args.approval_note ?? null },
     ctx,
     knownErrors: {
-      409: 'Recommendation already in non-suggested state. Re-fetch the queue to see current status.',
+      404: 'Recommendation not found. Re-fetch the queue to confirm it still exists.',
+      403: 'Recommendation belongs to a different client. Check the recommendation_id is from your own queue.',
+      409: 'Recommendation is no longer in open state. Re-fetch the queue to see current status.',
     },
   });
 }
@@ -41,7 +41,7 @@ async function handler(args: Args, ctx: ReturnType<typeof getCurrentSession>): P
 export const approveRecommendation: ToolDefinition<Args, Result> = {
   name: 'tessera_approve_recommendation',
   description:
-    'Approve a pending recommendation — moves the mechanic from "suggested" to "active" on the target workload, writes an audit-trail entry, and returns the approval receipt. THIS IS THE ONLY MUTATING TOOL IN v0.1. Provider config changes, API key management, composition cap changes, and Stripe operations are deliberately not exposed here — those live in the dashboard where blast radius requires explicit modal confirmation. Idempotent: re-approving a recommendation that is already active returns 409.',
+    'Approve a pending recommendation — transitions it from "open" to "in_progress" and appends an approval line (with the approving session\'s API key prefix) to the recommendation notes. THIS IS THE ONLY MUTATING TOOL IN v0.1. Provider config changes, API key management, composition cap changes, and Stripe operations are deliberately not exposed here — those live in the dashboard where blast radius requires explicit modal confirmation.',
   inputSchema,
   handler: (args) => handler(args, getCurrentSession()),
 };

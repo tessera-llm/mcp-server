@@ -13,22 +13,12 @@ const inputSchema = z.object({
 
 type Args = z.infer<typeof inputSchema>;
 
-interface DriftEvent {
-  detected_at: string;
-  metric: 'quality_floor' | 'p50_score' | 'p95_score' | 'composition_cap';
-  expected: number;
-  observed: number;
-  action_taken: 'auto_rollback' | 'stack_disabled' | 'logged' | 'composition_capped';
-}
-
 interface Result {
   workload_id: string;
   window: string;
   sla_floor: number;
-  p50_quality_score: number;
-  p95_quality_score: number;
-  composition_cap_active: boolean;
-  drift_events: DriftEvent[];
+  p50_quality_score: number | null;
+  p95_quality_score: number | null;
   measured_samples: number;
   as_of: string;
 }
@@ -44,7 +34,7 @@ async function handler(args: Args, ctx: ReturnType<typeof getCurrentSession>): P
 export const getQualitySnapshot: ToolDefinition<Args, Result> = {
   name: 'tessera_get_quality_snapshot',
   description:
-    'Return the quality snapshot for a workload — SLA floor (e.g. 0.95), measured p50 and p95 quality scores from canary evaluations, whether composition cap is active (max 2 content-mutators per request), and any drift events recorded in the window. Drift events surface auto-rollbacks, per-stack disables, and composition-cap breaches. Quality is THE primary trust factor — savings without quality verification is not Tessera surface.',
+    'Return the quality snapshot for a workload — SLA floor (default 0.95) and measured p50 / p95 quality scores from canary evaluations over the chosen window. Null p50 / p95 means there were no canary samples in the window. Quality is the primary trust factor — savings without quality verification is not Tessera surface.',
   inputSchema,
   handler: (args) => handler(args, getCurrentSession()),
 };

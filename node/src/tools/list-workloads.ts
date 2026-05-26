@@ -10,10 +10,11 @@ type Args = z.infer<typeof inputSchema>;
 interface Workload {
   id: string;
   name: string;
-  anchor_cost_usd_per_1m_tokens: number;
-  baseline_tokens_30d: number;
-  current_mechanic_stack: string[];
-  last_baseline_recompute_at: string;
+  provider: string;
+  model_id: string;
+  scope_status: string;
+  created_at: string;
+  updated_at: string;
 }
 
 interface Result {
@@ -27,7 +28,7 @@ async function handler(_args: Args, ctx: ReturnType<typeof getCurrentSession>): 
 export const listWorkloads: ToolDefinition<Args, Result> = {
   name: 'tessera_list_workloads',
   description:
-    'List the mapped workloads in the current Tessera workspace. Each workload represents a category of LLM calls (e.g. "support-triage", "summarisation", "ranker-prompt") with its anchor cost baseline and the current mechanic stack applied. Use this as the entry point before drilling into savings, recommendations, ledger entries, or quality snapshots for a specific workload. Returns no secrets and no prompt content.',
+    'List the mapped workloads in the current Tessera workspace. Each workload represents a category of LLM calls (e.g. "support-triage", "summarisation", "ranker-prompt") with its target provider, model id, and scope status. Use this as the entry point before drilling into savings, recommendations, ledger entries, or quality snapshots for a specific workload. Returns no secrets and no prompt content.',
   inputSchema,
   handler: (args) => handler(args, getCurrentSession()),
 };

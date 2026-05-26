@@ -80,7 +80,7 @@ describe('tessera_approve_recommendation tool (mutate)', () => {
       runWithSession(session, () =>
         approveRecommendation.handler({ recommendation_id: 'rec_abc' }, session),
       ),
-    ).rejects.toThrow(/Recommendation already in non-suggested state/);
+    ).rejects.toThrow(/Recommendation is no longer in open state/);
   });
 
   it('exposes the public tool name (the only mutating tool in v0.1)', () => {
