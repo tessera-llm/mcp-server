@@ -2,15 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { runWithSession } from '../../src/auth.js';
 import { getSavingsReport } from '../../src/tools/get-savings-report.js';
 import { mockFetch } from '../helpers/mock-fetch.js';
-import type { SessionContext } from '../../src/types.js';
+import { TEST_SESSION } from '../helpers/fixtures.js';
 
-const session: SessionContext = {
-  apiKey: 'tk_live_test',
-  userId: 'usr_x',
-  workspaceId: 'wks_x',
-  projectId: 'prj_fixture',
-  planTier: 'production',
-};
+const session = TEST_SESSION;
 
 const UPSTREAM_RESPONSE = {
   workload_id: 'wkl_01',
@@ -38,7 +32,6 @@ describe('tessera_get_savings_report tool', () => {
     expect(url.pathname).toBe('/api/v1/savings-report');
     expect(url.searchParams.get('workload_id')).toBe('wkl_01');
     expect(url.searchParams.get('window')).toBe('30d');
-    expect(url.searchParams.get('project_id')).toBe('prj_fixture');
   });
 
   it('parses with default window when omitted', async () => {

@@ -1,18 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { upstreamGet, upstreamPost } from '../src/upstream.js';
 import { mockFetch } from './helpers/mock-fetch.js';
-import type { SessionContext } from '../src/types.js';
+import { TEST_SESSION } from './helpers/fixtures.js';
 
-const session: SessionContext = {
-  apiKey: 'tk_live_test',
-  userId: 'usr_x',
-  workspaceId: 'wks_x',
-  projectId: 'prj_test_project',
-  planTier: 'production',
-};
+const session = TEST_SESSION;
 
 describe('upstreamGet', () => {
-  it('prepends base URL, appends project_id, merges query params, and sends the bearer token', async () => {
+  it('prepends base URL, passes query params, and sends the bearer token', async () => {
     const calls = mockFetch({ status: 200, body: { ok: true } });
 
     await upstreamGet({
@@ -25,10 +19,10 @@ describe('upstreamGet', () => {
     const url = new URL(calls[0]!.url);
     expect(url.origin).toBe('https://ledger.tesseraai.io');
     expect(url.pathname).toBe('/api/v1/savings-report');
-    expect(url.searchParams.get('project_id')).toBe('prj_test_project');
     expect(url.searchParams.get('workload_id')).toBe('wkl_42');
     expect(url.searchParams.get('window')).toBe('30d');
-    expect(calls[0]?.headers.authorization).toBe('Bearer tk_live_test');
+    expect(url.searchParams.get('client_id')).toBeNull();
+    expect(calls[0]?.headers.authorization).toBe(`Bearer ${session.apiKey}`);
   });
 
   it('surfaces 5xx as an error including the status code', async () => {
@@ -57,7 +51,7 @@ describe('upstreamGet', () => {
 });
 
 describe('upstreamPost', () => {
-  it('sends JSON body merged with project_id and source markers', async () => {
+  it('sends JSON body merged with the source marker but no scope id (the bearer token scopes)', async () => {
     const calls = mockFetch({ status: 200, body: { ok: true } });
 
     await upstreamPost({
@@ -71,7 +65,6 @@ describe('upstreamPost', () => {
     expect(calls[0]?.headers['content-type']).toBe('application/json');
     expect(calls[0]?.body).toEqual({
       approval_note: 'looks good',
-      project_id: 'prj_test_project',
       source: 'mcp-server',
     });
   });

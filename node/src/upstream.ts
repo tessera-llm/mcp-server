@@ -10,10 +10,13 @@ import type { SessionContext } from './types.js';
  * Default base URL: https://ledger.tesseraai.io
  * Override with TESSERA_UPSTREAM_API_BASE_URL env var (used by tests + staging).
  *
+ * Scoping: the dashboard derives client_id from the Bearer API key on every
+ * request. Tool handlers do NOT pass client_id / workload_id as query params
+ * or body fields — the token does that work.
+ *
  * NOTE: The /api/v1/* endpoints these tools call do NOT yet exist on the
  * dashboard at this scaffold's commit (2026-05-26). They must be implemented
- * dashboard-side BEFORE this MCP server is published to npm. See Task #11
- * in the parent session and spec § "v0.1 prerequisite — dashboard wiring".
+ * dashboard-side BEFORE this MCP server is published to npm.
  */
 
 const DEFAULT_BASE_URL = 'https://ledger.tesseraai.io';
@@ -49,7 +52,6 @@ async function handleResponse<T>(response: Response, path: string, knownErrors?:
 
 export async function upstreamGet<T>(opts: UpstreamGetOptions): Promise<T> {
   const url = new URL(`${getBaseUrl()}${opts.path}`);
-  url.searchParams.set('project_id', opts.ctx.projectId);
   if (opts.query) {
     for (const [key, value] of Object.entries(opts.query)) {
       url.searchParams.set(key, value);
@@ -73,7 +75,7 @@ export async function upstreamPost<T>(opts: UpstreamPostOptions): Promise<T> {
       'Content-Type': 'application/json',
       Accept: 'application/json',
     },
-    body: JSON.stringify({ ...opts.body, project_id: opts.ctx.projectId, source: 'mcp-server' }),
+    body: JSON.stringify({ ...opts.body, source: 'mcp-server' }),
   });
   return handleResponse<T>(response, opts.path, opts.knownErrors);
 }

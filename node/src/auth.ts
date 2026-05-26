@@ -16,25 +16,29 @@ export function runWithSession<T>(ctx: SessionContext, fn: () => Promise<T>): Pr
 }
 
 /**
- * Validate an API key against the upstream dashboard API.
- * Returns the SessionContext the key resolves to, or throws on invalid/expired/revoked.
+ * Validate an API key against the upstream dashboard.
  *
- * v0.1 implementation calls https://ledger.tesseraai.io/api/internal/validate-key
- * which short-lived caches the result for 60s (per dashboard auth pattern).
+ * Returns the SessionContext the key resolves to, or throws on
+ * malformed / invalid / revoked keys.
+ *
+ * Endpoint contract — POST {upstreamBaseUrl}/api/internal/validate-key
+ *   Headers: Authorization: Bearer tk_<...>
+ *   Body:    { source: "mcp-server" }
+ *   200 →    { client_id, workload_id, plan, key_prefix }
+ *   401/403 → key invalid or revoked
+ *   5xx →    upstream unavailable
+ *
+ * Dashboard-side route lives at dashboard/app/api/internal/validate-key/route.ts.
+ * Hashes Authorization bearer with SHA-256 and looks up proxy_api_keys.
  */
 export async function validateApiKey(
   apiKey: string,
   upstreamBaseUrl: string,
 ): Promise<SessionContext> {
-  if (!apiKey.startsWith('tk_live_') && !apiKey.startsWith('tk_test_')) {
-    throw new Error('Invalid API key format. Expected tk_live_* or tk_test_*.');
+  if (!apiKey.startsWith('tk_')) {
+    throw new Error('Invalid API key format. Expected tk_<token>.');
   }
 
-  // NOTE: /api/internal/validate-key does not yet exist on dashboard at scaffold commit (2026-05-26).
-  // Must be implemented BEFORE publish — see Task #11 prerequisite. Endpoint contract:
-  //   POST { source: 'mcp-server' } with Authorization: Bearer tk_live_*
-  //   → 200 { user_id, workspace_id, project_id, plan_tier }
-  //   → 401/403 if key invalid/revoked
   const url = `${upstreamBaseUrl}/api/internal/validate-key`;
   const response = await fetch(url, {
     method: 'POST',
@@ -53,17 +57,17 @@ export async function validateApiKey(
   }
 
   const data = (await response.json()) as {
-    user_id: string;
-    workspace_id: string;
-    project_id: string;
-    plan_tier: SessionContext['planTier'];
+    client_id: string;
+    workload_id: string | null;
+    plan: SessionContext['plan'];
+    key_prefix: string;
   };
 
   return {
     apiKey,
-    userId: data.user_id,
-    workspaceId: data.workspace_id,
-    projectId: data.project_id,
-    planTier: data.plan_tier,
+    clientId: data.client_id,
+    workloadId: data.workload_id,
+    plan: data.plan,
+    keyPrefix: data.key_prefix,
   };
 }

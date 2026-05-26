@@ -2,15 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { runWithSession } from '../../src/auth.js';
 import { approveRecommendation } from '../../src/tools/approve-recommendation.js';
 import { mockFetch } from '../helpers/mock-fetch.js';
-import type { SessionContext } from '../../src/types.js';
+import { TEST_SESSION } from '../helpers/fixtures.js';
 
-const session: SessionContext = {
-  apiKey: 'tk_live_test',
-  userId: 'usr_yevheny',
-  workspaceId: 'wks_x',
-  projectId: 'prj_fixture',
-  planTier: 'production',
-};
+const session = TEST_SESSION;
 
 const UPSTREAM_RESPONSE = {
   recommendation_id: 'rec_abc',
@@ -40,7 +34,6 @@ describe('tessera_approve_recommendation tool (mutate)', () => {
     expect(calls[0]?.url).toBe('https://ledger.tesseraai.io/api/v1/recommendations/rec_abc/approve');
     expect(calls[0]?.body).toEqual({
       approval_note: 'looks good — promote',
-      project_id: 'prj_fixture',
       source: 'mcp-server',
     });
   });
@@ -66,7 +59,6 @@ describe('tessera_approve_recommendation tool (mutate)', () => {
 
     expect(calls[0]?.body).toEqual({
       approval_note: null,
-      project_id: 'prj_fixture',
       source: 'mcp-server',
     });
   });

@@ -2,15 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { runWithSession } from '../../src/auth.js';
 import { getRecommendationQueue } from '../../src/tools/get-recommendation-queue.js';
 import { mockFetch } from '../helpers/mock-fetch.js';
-import type { SessionContext } from '../../src/types.js';
+import { TEST_SESSION } from '../helpers/fixtures.js';
 
-const session: SessionContext = {
-  apiKey: 'tk_live_test',
-  userId: 'usr_x',
-  workspaceId: 'wks_x',
-  projectId: 'prj_fixture',
-  planTier: 'production',
-};
+const session = TEST_SESSION;
 
 const UPSTREAM_RESPONSE = {
   recommendations: [
@@ -40,7 +34,6 @@ describe('tessera_get_recommendation_queue tool', () => {
     const url = new URL(calls[0]!.url);
     expect(url.pathname).toBe('/api/v1/recommendations/queue');
     expect(url.searchParams.get('workload_id')).toBeNull();
-    expect(url.searchParams.get('project_id')).toBe('prj_fixture');
   });
 
   it('passes workload_id query when provided', async () => {

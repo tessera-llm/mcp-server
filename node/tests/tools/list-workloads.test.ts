@@ -2,15 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { runWithSession } from '../../src/auth.js';
 import { listWorkloads } from '../../src/tools/list-workloads.js';
 import { mockFetch } from '../helpers/mock-fetch.js';
-import type { SessionContext } from '../../src/types.js';
+import { TEST_SESSION } from '../helpers/fixtures.js';
 
-const session: SessionContext = {
-  apiKey: 'tk_live_test',
-  userId: 'usr_x',
-  workspaceId: 'wks_x',
-  projectId: 'prj_fixture',
-  planTier: 'production',
-};
+const session = TEST_SESSION;
 
 const UPSTREAM_RESPONSE = {
   workloads: [
@@ -34,7 +28,7 @@ const UPSTREAM_RESPONSE = {
 };
 
 describe('tessera_list_workloads tool', () => {
-  it('hits /api/v1/workloads with project_id + bearer token and returns parsed body', async () => {
+  it('hits /api/v1/workloads with bearer token and returns parsed body', async () => {
     const calls = mockFetch({ status: 200, body: UPSTREAM_RESPONSE });
 
     const result = await runWithSession(session, () => listWorkloads.handler({}, session));
@@ -45,9 +39,8 @@ describe('tessera_list_workloads tool', () => {
     const url = new URL(calls[0]!.url);
     expect(url.origin).toBe('https://ledger.tesseraai.io');
     expect(url.pathname).toBe('/api/v1/workloads');
-    expect(url.searchParams.get('project_id')).toBe('prj_fixture');
     expect(calls[0]?.method).toBe('GET');
-    expect(calls[0]?.headers.authorization).toBe('Bearer tk_live_test');
+    expect(calls[0]?.headers.authorization).toBe(`Bearer ${session.apiKey}`);
     expect(calls[0]?.headers.accept).toBe('application/json');
   });
 

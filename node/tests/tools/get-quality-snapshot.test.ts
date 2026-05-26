@@ -2,15 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { runWithSession } from '../../src/auth.js';
 import { getQualitySnapshot } from '../../src/tools/get-quality-snapshot.js';
 import { mockFetch } from '../helpers/mock-fetch.js';
-import type { SessionContext } from '../../src/types.js';
+import { TEST_SESSION } from '../helpers/fixtures.js';
 
-const session: SessionContext = {
-  apiKey: 'tk_live_test',
-  userId: 'usr_x',
-  workspaceId: 'wks_x',
-  projectId: 'prj_fixture',
-  planTier: 'production',
-};
+const session = TEST_SESSION;
 
 const UPSTREAM_RESPONSE = {
   workload_id: 'wkl_01',
