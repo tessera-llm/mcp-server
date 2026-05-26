@@ -67,9 +67,3 @@ describe('tessera_list_workloads tool', () => {
   });
 });
 
-// TODO — remaining 5 tool tests follow this exact pattern, queued for next session:
-//   - get-savings-report.test.ts          (query: workload_id + window; numeric body)
-//   - get-recommendation-queue.test.ts    (optional workload_id query; array body)
-//   - get-ledger-entries.test.ts          (workload_id + since + limit; pagination via has_more / next_since)
-//   - get-quality-snapshot.test.ts        (workload_id + window; drift_events array)
-//   - approve-recommendation.test.ts      (POST; 409 → 'already approved' knownError mapping)
