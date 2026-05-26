@@ -28,12 +28,16 @@ const UPSTREAM_RESPONSE = {
 };
 
 describe('tessera_list_workloads tool', () => {
-  it('hits /api/v1/workloads with bearer token and returns parsed body', async () => {
+  it('hits /api/v1/workloads with bearer token and wraps customer-controlled workload names as untrusted', async () => {
     const calls = mockFetch({ status: 200, body: UPSTREAM_RESPONSE });
 
     const result = await runWithSession(session, () => listWorkloads.handler({}, session));
 
-    expect(result).toEqual(UPSTREAM_RESPONSE);
+    expect(result.workloads).toHaveLength(2);
+    expect(result.workloads[0]!.name).toBe('<tessera:untrusted>support-triage</tessera:untrusted>');
+    expect(result.workloads[1]!.name).toBe('<tessera:untrusted>summarisation</tessera:untrusted>');
+    // Non-user-controlled fields stay untagged.
+    expect(result.workloads[0]!.id).toBe('wkl_01');
     expect(calls).toHaveLength(1);
 
     const url = new URL(calls[0]!.url);

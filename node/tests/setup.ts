@@ -17,3 +17,11 @@ afterEach(() => {
 export function restoreFetch(): void {
   globalThis.fetch = originalFetch;
 }
+
+/**
+ * Platform-native fetch captured at module load, before the per-test
+ * throw-stub is installed. Used by `mockFetch` when a URL-filtered mock
+ * needs to fall through for URLs it does not intercept (e.g. the test
+ * driver's outbound HTTP to an in-process test server).
+ */
+export const realPlatformFetch = originalFetch;

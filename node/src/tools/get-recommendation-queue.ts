@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { getCurrentSession } from '../auth.js';
 import type { ToolDefinition } from '../types.js';
+import { markUntrusted } from '../untrusted.js';
 import { upstreamGet } from '../upstream.js';
 
 const inputSchema = z.object({
@@ -39,7 +40,15 @@ async function handler(args: Args, ctx: ReturnType<typeof getCurrentSession>): P
   if (args.workload_id) {
     query.workload_id = args.workload_id;
   }
-  return upstreamGet<Result>({ path: '/api/v1/recommendations/queue', query, ctx });
+  const raw = await upstreamGet<Result>({ path: '/api/v1/recommendations/queue', query, ctx });
+  return {
+    ...raw,
+    recommendations: raw.recommendations.map((r) => ({
+      ...r,
+      title: markUntrusted(r.title),
+      description: markUntrusted(r.description),
+    })),
+  };
 }
 
 export const getRecommendationQueue: ToolDefinition<Args, Result> = {

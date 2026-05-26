@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { getCurrentSession } from '../auth.js';
 import type { ToolDefinition } from '../types.js';
+import { markUntrusted } from '../untrusted.js';
 import { upstreamGet } from '../upstream.js';
 
 const inputSchema = z.object({}).describe('No arguments.');
@@ -22,7 +23,10 @@ interface Result {
 }
 
 async function handler(_args: Args, ctx: ReturnType<typeof getCurrentSession>): Promise<Result> {
-  return upstreamGet<Result>({ path: '/api/v1/workloads', ctx });
+  const raw = await upstreamGet<Result>({ path: '/api/v1/workloads', ctx });
+  return {
+    workloads: raw.workloads.map((w) => ({ ...w, name: markUntrusted(w.name) })),
+  };
 }
 
 export const listWorkloads: ToolDefinition<Args, Result> = {

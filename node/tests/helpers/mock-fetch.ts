@@ -11,6 +11,14 @@ export interface MockFetchOptions {
   status?: number;
   body?: unknown;
   headers?: Record<string, string>;
+  /**
+   * Only intercept fetch calls whose URL matches this predicate. Anything
+   * else falls through to the real fetch — useful when a test spins up an
+   * in-process HTTP server and needs to mock outbound calls FROM that
+   * server without intercepting the inbound test-driver calls TO it.
+   * Default: intercept every call.
+   */
+  matchUrl?: (url: string) => boolean;
 }
 
 /**
@@ -22,6 +30,13 @@ export function mockFetch(options: MockFetchOptions = {}): MockedRequest[] {
 
   const fakeFetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
+    if (options.matchUrl && !options.matchUrl(url)) {
+      // Fall through to the platform native fetch captured in setup.ts —
+      // exposed via `restoreFetch()` so we don't accidentally fall back to
+      // the per-test throw-stub.
+      const { realPlatformFetch } = await import('../setup.js');
+      return realPlatformFetch(input as RequestInfo, init);
+    }
     const method = (init?.method ?? 'GET').toUpperCase();
     // HTTP headers are case-insensitive — normalise keys to lowercase so tests
     // can assert against `headers.authorization` regardless of how the caller cased it.

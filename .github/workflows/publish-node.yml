@@ -1,0 +1,62 @@
+name: Publish Node to npm (sigstore-attested)
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+defaults:
+  run:
+    working-directory: ./node
+
+jobs:
+  publish:
+    name: Build + publish (sigstore-signed)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      - name: Static prompt-injection scan on tool descriptions
+        run: npm run static-scan
+
+      - name: Build
+        run: npm run build
+
+      - name: Check NPM_TOKEN secret
+        id: check-secret
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "::warning::NPM_TOKEN secret not set on this repo. Set via: gh secret set NPM_TOKEN --repo tessera-llm/mcp-server"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish to npm (sigstore-attested)
+        if: steps.check-secret.outputs.skip == 'false'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --provenance

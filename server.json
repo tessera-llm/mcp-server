@@ -1,120 +1,89 @@
 {
-  "_meta_status": "DRAFT — fields below blend documented MCP Registry submission shape with speculative metadata extensions. Before first registry submission, verify against the live schema at registry.modelcontextprotocol.io (and the Glama / mcp.so / punkpeye / wong2 listing requirements). Speculative fields likely to need rename or removal: $schema URL (unverified), transports_planned, client_compatibility, security, spec_version_target, spec_version_forward_compat. The required fields (name, description, version, repository, packages, tools) follow established conventions from peer servers (Sentry, PostHog, Supabase) and should validate cleanly.",
-  "$schema": "https://modelcontextprotocol.io/schemas/server.schema.json",
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.tesseraai/mcp-server",
-  "description": "MCP server exposing Tessera's LLM cost optimization layer as tools for tool-using agents (Claude Desktop, Claude Code, Cursor, Cline, Continue, Goose, Zed). Returns savings decisions — anchored spend, drift detection, recommendation approval — not raw logs. v0.1 surface: six tools (five read + one mutate). Stdio transport at v0.1; Streamable HTTP queued.",
+  "title": "Tessera MCP Server",
+  "description": "MCP server for Tessera's LLM cost-optimization layer — anchored spend, drift, recommendations.",
   "version": "0.1.0-alpha.0",
-  "status": "alpha",
-  "license": "Apache-2.0",
+  "websiteUrl": "https://tesseraai.io/dev",
   "repository": {
     "url": "https://github.com/tessera-llm/mcp-server",
-    "source": "github"
-  },
-  "homepage": "https://tesseraai.io/dev",
-  "author": {
-    "name": "Tessera",
-    "organization": "Fintechagency OÜ",
-    "url": "https://tesseraai.io",
-    "contact": "contact@tesseraai.io"
+    "source": "github",
+    "subfolder": "node"
   },
   "packages": [
     {
-      "registry_name": "npm",
-      "name": "@tessera-llm/mcp-server",
+      "registryType": "npm",
+      "identifier": "@tessera-llm/mcp-server",
       "version": "0.1.0-alpha.0",
-      "runtime": "node",
-      "runtime_hint": "node >= 18",
-      "install": {
-        "stdio": {
-          "command": "npx",
-          "args": ["-y", "@tessera-llm/mcp-server"],
-          "env": [
-            {
-              "name": "TESSERA_API_KEY",
-              "required": true,
-              "description": "API key in tk_live_* or tk_test_* format. Get one free at https://tesseraai.io/dev (60M tokens/month, no card)."
-            },
-            {
-              "name": "TESSERA_UPSTREAM_API_BASE_URL",
-              "required": false,
-              "default": "https://ledger.tesseraai.io",
-              "description": "Override only for staging or local-dev testing."
-            }
-          ]
+      "runtimeHint": "npx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "TESSERA_API_KEY",
+          "description": "API key in tk_live_* or tk_test_* format. Get one free at https://tesseraai.io/dev.",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "TESSERA_UPSTREAM_API_BASE_URL",
+          "description": "Override only for staging or local-dev testing.",
+          "isRequired": false,
+          "default": "https://ledger.tesseraai.io"
         }
+      ]
+    }
+  ],
+  "_meta": {
+    "io.modelcontextprotocol.registry/publisher-provided": {
+      "status": "alpha",
+      "license": "Apache-2.0",
+      "categories": [
+        "observability",
+        "cost-optimization",
+        "ai-infrastructure",
+        "llm-tooling"
+      ],
+      "keywords": [
+        "tessera",
+        "mcp",
+        "llm",
+        "cost-optimization",
+        "ai-cost",
+        "llm-proxy",
+        "openai",
+        "anthropic",
+        "claude",
+        "savings",
+        "audit"
+      ],
+      "transports_supported": ["stdio", "streamable-http"],
+      "tools": [
+        { "name": "tessera_list_workloads", "side_effect": "read" },
+        { "name": "tessera_get_savings_report", "side_effect": "read" },
+        { "name": "tessera_get_recommendation_queue", "side_effect": "read" },
+        { "name": "tessera_get_ledger_entries", "side_effect": "read" },
+        { "name": "tessera_get_quality_snapshot", "side_effect": "read" },
+        { "name": "tessera_approve_recommendation", "side_effect": "write" }
+      ],
+      "client_compatibility": {
+        "claude_desktop": "supported",
+        "claude_code": "supported",
+        "cursor": "supported",
+        "cline": "supported",
+        "continue": "supported",
+        "goose": "supported_via_http",
+        "zed": "supported_via_mcp_remote_bridge"
+      },
+      "security": {
+        "auth_required": true,
+        "auth_methods": ["api_key_env_var"],
+        "auth_methods_planned": ["oauth_2.1"],
+        "untrusted_content_labeling": "active",
+        "scanned_by": ["tessera-static-scan v0.1"],
+        "scanned_by_planned": ["snyk-agent-scan"]
       }
     }
-  ],
-  "transports": ["stdio"],
-  "transports_planned": ["streamable-http"],
-  "tools": [
-    {
-      "name": "tessera_list_workloads",
-      "side_effect": "read",
-      "summary": "List mapped workloads with anchor cost and current mechanic stack."
-    },
-    {
-      "name": "tessera_get_savings_report",
-      "side_effect": "read",
-      "summary": "Anchored spend vs actual + measured savings + performance fee accrual for a workload over 7d / 30d / mtd."
-    },
-    {
-      "name": "tessera_get_recommendation_queue",
-      "side_effect": "read",
-      "summary": "Pending Optimize-tab recommendations with expected lift, confidence, and sample size."
-    },
-    {
-      "name": "tessera_get_ledger_entries",
-      "side_effect": "read",
-      "summary": "Audit-immutable Monthly Reading rows — provider call, mechanic stack applied, savings classification, pricing-catalog snapshot."
-    },
-    {
-      "name": "tessera_get_quality_snapshot",
-      "side_effect": "read",
-      "summary": "SLA floor, p50 / p95 quality scores, drift events, composition-cap status."
-    },
-    {
-      "name": "tessera_approve_recommendation",
-      "side_effect": "write",
-      "summary": "Move a queued mechanic from 'suggested' to 'active' with an audit-trail entry. Only mutating tool in v0.1."
-    }
-  ],
-  "categories": [
-    "observability",
-    "cost-optimization",
-    "ai-infrastructure",
-    "llm-tooling"
-  ],
-  "keywords": [
-    "tessera",
-    "mcp",
-    "model-context-protocol",
-    "llm",
-    "cost-optimization",
-    "ai-cost",
-    "llm-proxy",
-    "openai",
-    "anthropic",
-    "claude",
-    "savings",
-    "audit"
-  ],
-  "client_compatibility": {
-    "claude_desktop": "supported",
-    "claude_code": "supported",
-    "cursor": "supported",
-    "cline": "supported",
-    "continue": "supported",
-    "goose": "supported_via_http_when_available",
-    "zed": "supported_via_mcp_remote_bridge"
-  },
-  "security": {
-    "auth_required": true,
-    "auth_methods": ["api_key_env_var"],
-    "auth_methods_planned": ["oauth_2.1"],
-    "untrusted_content_labeling": "planned",
-    "scanned_by": ["mcp-scan (Invariant Labs) — planned in CI"]
-  },
-  "spec_version_target": "2025-11-25",
-  "spec_version_forward_compat": "2026-07-28"
+  }
 }

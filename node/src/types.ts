@@ -30,6 +30,12 @@ export type Transport = 'stdio' | 'http';
 export interface ServerConfig {
   transport: Transport;
   httpPort?: number;
+  httpHost?: string;
+  /**
+   * Boot-time API key. Used by stdio (single-session) and as a fallback for
+   * HTTP requests that arrive without an Authorization header. HTTP requests
+   * that DO carry Authorization: Bearer use that header's key instead.
+   */
   apiKey: string;
   upstreamApiBaseUrl: string;
 }
