@@ -5,7 +5,7 @@
 [![npm version](https://img.shields.io/npm/v/@tessera-llm/mcp-server.svg)](https://www.npmjs.com/package/@tessera-llm/mcp-server)
 [![Apache-2.0 License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
-**Status:** v0.1.0-alpha — scaffolding in progress. Not yet published. Spec: `D:/Skin/plans/tessera-mcp-server-spec-2026-05-26.md`.
+**Status:** v0.1.2 — published 2026-05-27 on npm with sigstore SLSA provenance v1, listed on `registry.modelcontextprotocol.io`.
 
 Tessera is an LLM proxy that optimizes API spend through multi-provider routing, prompt compression, audit-immutable logging, output-length prediction, and batch arbitrage. This package exposes Tessera as an [MCP](https://modelcontextprotocol.io) server for tool-using agents — Claude Desktop, Claude Code, Cursor, Cline, Continue, Goose, Zed.
 
@@ -28,7 +28,7 @@ Or add to your client config:
       "command": "npx",
       "args": ["-y", "@tessera-llm/mcp-server"],
       "env": {
-        "TESSERA_API_KEY": "tk_live_..."
+        "TESSERA_API_KEY": "tk_..."
       }
     }
   }
@@ -44,7 +44,7 @@ Or add to your client config:
       "command": "npx",
       "args": ["-y", "@tessera-llm/mcp-server"],
       "env": {
-        "TESSERA_API_KEY": "tk_live_..."
+        "TESSERA_API_KEY": "tk_..."
       }
     }
   }
@@ -59,7 +59,7 @@ Or add to your client config:
     "tessera": {
       "command": "npx",
       "args": ["-y", "@tessera-llm/mcp-server"],
-      "env": { "TESSERA_API_KEY": "tk_live_..." }
+      "env": { "TESSERA_API_KEY": "tk_..." }
     }
   }
 }
@@ -91,7 +91,7 @@ SSE (deprecated in MCP spec 2025-11-25) is not supported.
 
 ## Auth
 
-`TESSERA_API_KEY` env var or `Authorization: Bearer <key>` header (HTTP transport). Same API key as the SDK — `tk_live_*` format. Future v0.2: OAuth 2.1 (aligned with MCP spec RC 2026-07-28).
+`TESSERA_API_KEY` env var or `Authorization: Bearer <key>` header (HTTP transport). Same API key as the SDK — `tk_*` format. Future v0.2: OAuth 2.1 (aligned with MCP spec RC 2026-07-28).
 
 ## Security posture
 
