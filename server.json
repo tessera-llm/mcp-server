@@ -2,8 +2,8 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.tesseraai/mcp-server",
   "title": "Tessera MCP Server",
-  "description": "MCP server for Tessera's LLM cost-optimization layer — anchored spend, drift, recommendations.",
-  "version": "0.1.1",
+  "description": "MCP server for Tessera's LLM cost-optimization layer: anchored spend, drift, recommendations.",
+  "version": "0.1.2",
   "websiteUrl": "https://tesseraai.io/dev",
   "repository": {
     "url": "https://github.com/tessera-llm/mcp-server",
@@ -14,7 +14,7 @@
     {
       "registryType": "npm",
       "identifier": "@tessera-llm/mcp-server",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "runtimeHint": "npx",
       "transport": {
         "type": "stdio"

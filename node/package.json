@@ -1,8 +1,8 @@
 {
   "name": "@tessera-llm/mcp-server",
   "mcpName": "io.tesseraai/mcp-server",
-  "version": "0.1.1",
-  "description": "MCP server exposing Tessera's LLM cost optimization layer as tools for Claude Desktop, Claude Code, Cursor, Cline, Continue, and other MCP-aware clients. Returns savings decisions — anchored spend, drift detection, recommendation approval — not raw logs.",
+  "version": "0.1.2",
+  "description": "MCP server exposing Tessera's LLM cost optimization layer as tools for Claude Desktop, Claude Code, Cursor, Cline, Continue, and other MCP-aware clients. Returns savings decisions (anchored spend, drift detection, recommendation approval), not raw logs.",
   "keywords": [
     "mcp",
     "model-context-protocol",

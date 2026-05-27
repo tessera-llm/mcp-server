@@ -4,6 +4,14 @@ All notable changes to `@tessera-llm/mcp-server` are documented in this file. Fo
 
 ## [Unreleased]
 
+## [0.1.2] — 2026-05-27
+
+Patch release replacing em-dash characters in package descriptions with safe punctuation. The `mcp-publisher` Windows binary reads `server.json` using the system default codepage (CP1251 on a Russian Windows install) instead of forcing UTF-8, mangling the UTF-8 em-dash bytes into a three-character Cyrillic sequence on the MCP Registry. Avoiding em-dashes in registry-facing strings also satisfies the project-wide Vale `EmDash` style rule.
+
+### Changed
+- `server.json` description: em-dash separator replaced with a colon.
+- `node/package.json` description: em-dash separators replaced with a parenthetical clause.
+
 ## [0.1.1] — 2026-05-27
 
 Patch release adding the `mcpName` field that the official MCP Registry requires on the npm package manifest before it will accept a publish for the corresponding registry namespace.
