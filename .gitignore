@@ -44,3 +44,11 @@ Thumbs.db
 !.env.example
 *.pem
 *.key
+# MCP Registry Ed25519 keypair (private + public byproducts).
+# Private key lives in the password manager only.
+tesseraai-mcp-private*
+tesseraai-mcp-public*
+
+# ── Local tooling binaries ─────────────────────────────────────────────
+mcp-publisher.exe
+mcp-publisher

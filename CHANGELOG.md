@@ -4,6 +4,13 @@ All notable changes to `@tessera-llm/mcp-server` are documented in this file. Fo
 
 ## [Unreleased]
 
+## [0.1.1] — 2026-05-27
+
+Patch release adding the `mcpName` field that the official MCP Registry requires on the npm package manifest before it will accept a publish for the corresponding registry namespace.
+
+### Added
+- `mcpName: io.tesseraai/mcp-server` in `node/package.json`. The Registry fetches the npm manifest at publish time and matches this field against the namespace claimed in `server.json`. Without it, `mcp-publisher publish` returns HTTP 400 with `NPM package '@tessera-llm/mcp-server' is missing required 'mcpName' field`.
+
 ## [0.1.0] — 2026-05-27
 
 First public release on npm. Apache-2.0, sigstore-attested via the `v*`-tag publish workflow.

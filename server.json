@@ -3,7 +3,7 @@
   "name": "io.tesseraai/mcp-server",
   "title": "Tessera MCP Server",
   "description": "MCP server for Tessera's LLM cost-optimization layer — anchored spend, drift, recommendations.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "websiteUrl": "https://tesseraai.io/dev",
   "repository": {
     "url": "https://github.com/tessera-llm/mcp-server",
@@ -14,7 +14,7 @@
     {
       "registryType": "npm",
       "identifier": "@tessera-llm/mcp-server",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "runtimeHint": "npx",
       "transport": {
         "type": "stdio"
