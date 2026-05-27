@@ -43,16 +43,23 @@ const config: ServerConfig = {
   httpHost: process.env.TESSERA_MCP_HOST ?? '127.0.0.1',
 };
 
+// Exit-code semantics on fatal error: yield to the event loop via
+// setImmediate so outstanding undici fetch sockets and other libuv handles
+// get a chance to close before we exit. Calling `process.exit(1)` directly
+// inside a synchronous catch surfaces as `Assertion failed: !(handle->flags
+// & UV_HANDLE_CLOSING)` on Windows after a 401 from validate-key (the
+// auth-fail path keeps an undici socket open mid-close). Yielding once
+// past the current microtask queue lets the dispatcher drain cleanly.
+// Fix landed 0.1.3 per launch-eve MCP audit P0-3 (2026-05-27).
+function fatal(error: unknown): void {
+  process.stderr.write(`tessera-mcp-server: fatal: ${(error as Error).message}\n`);
+  setImmediate(() => process.exit(1));
+}
+
 if (transport === 'stdio') {
-  runStdioServer(config).catch((error: unknown) => {
-    process.stderr.write(`tessera-mcp-server: fatal: ${(error as Error).message}\n`);
-    process.exit(1);
-  });
+  runStdioServer(config).catch(fatal);
 } else if (transport === 'http') {
-  runHttpServer(config).catch((error: unknown) => {
-    process.stderr.write(`tessera-mcp-server: fatal: ${(error as Error).message}\n`);
-    process.exit(1);
-  });
+  runHttpServer(config).catch(fatal);
 } else {
   process.stderr.write(`tessera-mcp-server: unknown transport "${transport}". Use stdio or http.\n`);
   process.exit(1);
