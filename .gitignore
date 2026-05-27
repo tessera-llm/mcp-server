@@ -52,3 +52,13 @@ tesseraai-mcp-public*
 # ── Local tooling binaries ─────────────────────────────────────────────
 mcp-publisher.exe
 mcp-publisher
+
+# ── prepack-generated copies ────────────────────────────────────────────
+# README.md + LICENSE live at repo ROOT; the `node/copy-docs` prepack
+# script copies them into node/ before `npm pack` so the published
+# tarball contains docs (was missing in 0.1.2 — caught 2026-05-27).
+# Generated artifacts are gitignored so the working tree isn't
+# duplicated and "edit-in-the-wrong-place" footguns are blocked at the
+# git-add layer.
+node/README.md
+node/LICENSE

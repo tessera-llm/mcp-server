@@ -4,6 +4,15 @@ All notable changes to `@tessera-llm/mcp-server` are documented in this file. Fo
 
 ## [Unreleased]
 
+## [0.1.3] — 2026-05-27
+
+Launch-eve packaging fixes caught by audit ~10h before HN Show HN fire. Three P0s closed against 0.1.2:
+
+### Fixed
+- **Tarball ships README + LICENSE.** 0.1.2 published with `node/package.json` declaring `files: ["dist", "README.md", "LICENSE"]`, but those docs live at repo root (one level above the publishable `node/` directory). npm packs from where `package.json` lives, so it could not find them — `npmjs.com/package/@tessera-llm/mcp-server` rendered a docs-less page. New `prepack` script `node/scripts/copy-docs.mjs` copies root README + LICENSE into `node/` before pack; the generated copies are gitignored.
+- **Server self-reports version 0.1.3 over MCP.** `node/src/server.ts` previously hard-coded `PACKAGE_VERSION = '0.1.0-alpha.0'`, which surfaced in every MCP client UI (Cursor, Claude Desktop, Cline) regardless of the published version. Bumped to match `package.json`.
+- **CHANGELOG no longer leaks an internal `D:/Skin/...` path** — rewritten to a neutral phrasing in the 0.1.0-alpha.0 entry.
+
 ## [0.1.2] — 2026-05-27
 
 Patch release replacing em-dash characters in package descriptions with safe punctuation. The `mcp-publisher` Windows binary reads `server.json` using the system default codepage (CP1251 on a Russian Windows install) instead of forcing UTF-8, mangling the UTF-8 em-dash bytes into a three-character Cyrillic sequence on the MCP Registry. Avoiding em-dashes in registry-facing strings also satisfies the project-wide Vale `EmDash` style rule.
@@ -43,5 +52,5 @@ The 6 tool handlers call `/api/v1/workloads`, `/api/v1/savings-report`, `/api/v1
 
 ## [0.1.0-alpha.0] — 2026-05-26
 
-- Initial scaffold per spec `D:/Skin/plans/tessera-mcp-server-spec-2026-05-26.md`.
+- Initial scaffold per internal spec; tool surface + auth + tests scaffolded.
 - Not yet published to npm; awaiting full tool implementation + tests + manifest.

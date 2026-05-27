@@ -11,7 +11,7 @@ import type { ServerConfig, SessionContext, ToolDefinition } from './types.js';
 import { UNTRUSTED_PREAMBLE } from './untrusted.js';
 
 const PACKAGE_NAME = '@tessera-llm/mcp-server';
-const PACKAGE_VERSION = '0.1.0-alpha.0';
+const PACKAGE_VERSION = '0.1.3';
 
 function registerToolOnServer<TArgs, TResult>(
   server: McpServer,

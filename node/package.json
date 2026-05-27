@@ -1,7 +1,7 @@
 {
   "name": "@tessera-llm/mcp-server",
   "mcpName": "io.tesseraai/mcp-server",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "MCP server exposing Tessera's LLM cost optimization layer as tools for Claude Desktop, Claude Code, Cursor, Cline, Continue, and other MCP-aware clients. Returns savings decisions (anchored spend, drift detection, recommendation approval), not raw logs.",
   "keywords": [
     "mcp",
@@ -60,6 +60,8 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "static-scan": "node scripts/static-scan.mjs",
+    "copy-docs": "node scripts/copy-docs.mjs",
+    "prepack": "npm run copy-docs",
     "prepublishOnly": "npm run build && npm test && npm run static-scan"
   },
   "engines": {
