@@ -74,7 +74,7 @@ v0.1 exposes 6 tools (5 read + 1 mutate). Hard cap — no tool sprawl.
 | Tool | Read/Write | Purpose |
 |---|---|---|
 | `tessera_list_workloads` | read | List your mapped workloads with anchor cost + current m-stack. |
-| `tessera_get_savings_report` | read | Anchored spend + measured savings + performance-fee accrual for a window. |
+| `tessera_get_savings_report` | read | Anchored spend + measured savings for a window. |
 | `tessera_get_recommendation_queue` | read | Pending Optimize-tab recommendations with expected lift + confidence. |
 | `tessera_get_ledger_entries` | read | Audit-immutable Monthly Reading rows (provider call, mechanic stack applied, savings). |
 | `tessera_get_quality_snapshot` | read | SLA floor + p50/p95 quality scores + drift events. |
